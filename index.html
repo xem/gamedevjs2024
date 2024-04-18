@@ -9,13 +9,14 @@
 
 <div id=main>
 <h1 id=h1 class=o0>The Power of Two</h1>
-<p id=p1 class=o0><i>Here's a <b>calculator</b>. It only has the number <b>two</b>.
-<p id=p2 class=o0><i>But two is very <b>powerful</b> ! For example, give me a <b>4</b>...
+<p id=p1 class=o0><i>Here's a <b>calculator</b>. It only has the number <b>two</b></i>.</p>
+<p id=p2 class=o0><i>But two is very <b>powerful</b> ! For example, give me a <b>4</b></i>...</p>
 <!--p hidden>Try to compute the value <b id=tot>6</b> on this calculator.
 <br>You can use the digit <b>two</b> exactly <b id=times>four</b> times.
 <br>No other digits are allowed.
 <br-->
 <div id=calc class="o0 r90">
+  <!--div id=depth>&nbsp;</div-->
 
   <div id=scr></div>
   <div id=res></div>
@@ -36,7 +37,7 @@
     <!--div id=kls hidden>&lt;&lt;</div-->
     <!--div id=kfact>!</div-->
     <tr>
-    <td><div id=k2>2</div><b id=k2r hidden>×4</b>
+    <td><div id=k2>2</div><b id=k2r class=o0>×3</b>
     <td><div id=keq>=</div>
     <td><div id=kdel>←</div>
     <td><div id=kc>Reset</div>
@@ -53,7 +54,7 @@ body { text-align: center; background: radial-gradient(circle at bottom, #dfefff
 h1 { font-family: "Great Vibes", cursive; font-size: 50px; transition: all 1s .2s; margin: 5px 0; }
 #main { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 100%; transition: all 1s; height: 50px; perspective: 700px; transform-style: preserve-3d; }
 p { font-family: Calibri; font-size: 20px; margin: 0 0 5px; transition: all .5s; }
-#calc { width: 400px; margin: auto; background: #eee; border: 2px solid #aaa; border-width: 2px 6px 6px 2px; border-radius: 15px; padding: 15px; transition: all .5s linear; margin: 15px auto;}
+#calc { width: 400px; margin: auto; background: #eee; border: 2px solid #aaa; border-width: 2px 6px 6px 2px; border-radius: 15px; padding: 15px; transition: all .5s linear; margin: 15px auto; transform: rotateY(0); position: relative; }
 .r90 { transform: rotateY(-90deg); }
 #scr { background: #ddd; border: 2px solid #aaa; font: bold 25px/35px monospace; text-align: left; padding: 5px 15px 40px; word-wrap: break-word; border-width: 3px 2px 2px 3px; border-radius: 4px; min-height: 35px; margin: 0 0 80px;}
 #res { height: 40px; font: bold 25px/25px monospace; text-align: right; padding: 0px 15px 0 0; margin: -130px 0 0; }
@@ -72,16 +73,17 @@ p { font-family: Calibri; font-size: 20px; margin: 0 0 5px; transition: all .5s;
 #tot { font-size: 30px; line-height: 20px; color: #007 }
 #times { font-size: 25px; line-height: 20px; color: #007 }
 #res span { font-size: 12px }
+#depth { width: 20px; height: 100%; background: #aaa; transform: rotateY(90deg); position: absolute; }
 </style>
 
 <script>
 levels = [
   // number of twos allowed , total
   [99, 4], // 2+2
-  [99, 0],  // 2-2
-  [2, 1],  // 2*2
-  [2, -4], // -2*2
-  [3, 2],  // 2+2/2
+  [99, 0], // 2-2
+  [99, 1], // 2/
+  [3, 3],  // 2+2/2
+  [3, 0.5],  // 2/2/2
 ];
 
 exp = "";     // expression to eval
@@ -93,21 +95,55 @@ win = 0;      // current level won
 
 // Intro
 intro = () => {
-  console.log(1);
+  //console.log(1);
   h1.classList.remove("o0");
   setTimeout("main.style.height='400px'", 2000);
   setTimeout("p1.classList.remove('o0')", 3000);
   setTimeout("calc.classList.remove('o0','r90')", 4500);
-  setTimeout("p2.classList.remove('o0')", 6500);
-  setTimeout("goal.innerHTML='Goal: 4'", 8000);
-  setTimeout("goal.classList.remove('o0')", 8000);
+  setTimeout("p2.classList.remove('o0')", 6000);
+  setTimeout("goal.innerHTML='Goal: 4'", 7000);
+  setTimeout("goal.classList.remove('o0')", 7500);
 }
 
 // Render a level
 render = (level) => {
-  calc.style.transform = "rotateY(90deg)";
+
+  // Level 1
+  if(level == 1){
+    p1.classList.add("o0");
+    p2.classList.add("o0");
+    setTimeout('p2.innerHTML="The goal is shown on the screen.";p2.classList.remove("o0")', 600);
+  }
+  
+  // Level 2
+  if(level == 2){
+    p1.classList.add("o0");
+    p2.classList.add("o0");
+    setTimeout('p2.innerHTML="Your progress is saved automatically.";p2.classList.remove("o0")', 600);
+  }
+  
+  // Level 3
+  if(level == 3){
+    p1.classList.add("o0");
+    p2.classList.add("o0");
+    setTimeout('p2.innerHTML="Now, you need to use the number 2 exactly <b>3</b> times.";p2.classList.remove("o0")', 600);
+  }
+  
+  if(level > 2){
+    k2r.classList.remove("o0");
+  }
+  
+  if(level > levels.length){
+    main.classList.add("o0");
+  }
+
+  calc.style.transform = "rotateY(-90deg)";
   setTimeout(()=>{
-    calc.style.transition='none'
+    h1.classList.remove("o0");
+    calc.classList.remove("o0");
+    goal.classList.remove("o0");
+    main.style.height='400px';
+    calc.style.transition='none';
     win = 0;
     exp = "";
     expdisp = "";
@@ -116,16 +152,23 @@ render = (level) => {
     scr.innerHTML = "";
     scr.style.background = "";
     res.innerHTML = "";
-    goal.innerHTML = "";
-  }, 500);
-  setTimeout("calc.style.transform='rotateY(-90deg)'", 505);
-  setTimeout("calc.style.transition='all .5s'", 510);
-  setTimeout("calc.style.transform='rotateY(0deg)'", 515);
+    goal.innerHTML = "Goal: " + levels[level][1];
+    k2r.innerHTML = "×" + levels[level][0];
+    k2.classList.remove("disabled");
+  }, 550);
+  setTimeout("calc.style.transform='rotateY(90deg)'", 600);
+  setTimeout("calc.style.transition='all .5s'", 650);
+  setTimeout("calc.style.transform='rotateY(0deg)'", 700);
 
 }
   
 // onload
 onload = () => {
+
+  level = 0;
+  if(localStorage["PowerOfTwo"]){
+    level = localStorage["PowerOfTwo"];
+  }
 
   // Intro / continue
   if(level == 0){
@@ -152,11 +195,11 @@ press = (val, dispval) => {
       expdisp = expdisp.slice(0, -1);
       setTimeout("scr.innerHTML=expdisp", 100);
     }
-    if(exp.match(/2/g).length == 4) {
+    if(exp.match(/2/g).length == levels[level][0]) {
       k2d = 1;
       k2.classList.add("disabled")
     }
-    k2r.innerHTML = "×" + (4 - (exp.match(/2/g).length));
+    k2r.innerHTML = "×" + (levels[level][0] - (exp.match(/2/g).length));
   }
 }
 
@@ -181,6 +224,7 @@ keq.onclick = () => {
     scr.style.background = "#6f6";
     win = 1;
     level++;
+    localStorage["PowerOfTwo"] = level;
     setTimeout('render(level)',1000);
   }
 }
