@@ -29,13 +29,11 @@
     <td><div id=ksub>−</div>
     <td><div id=kmul>×</div>
     <td><div id=kdiv>÷</div>
-    <tr hidden>
-    <td><div id=kpar1 hidden>(</div>
-    <td><div id=kpar2 hidden>)</div>
-    <td><div id=kpow hidden>**</div>
-    <td><div id=ksqrt hidden>V<b>▔</b></div>
-    <!--div id=kls hidden>&lt;&lt;</div-->
-    <!--div id=kfact>!</div-->
+    <tr id=others style=display:none>
+    <td><div id=kpow>^</div>
+    <td><div id=ksqrt>V<b>▔</b></div>
+    <td><div id=kpar1>(</div>
+    <td><div id=kpar2>)</div>
     <tr>
     <td><div id=k2>2</div><b id=k2r class=o0>×3</b>
     <td><div id=keq>=</div>
@@ -46,6 +44,8 @@
 
 </div>
 </div>
+
+<a id=r class=o0>Restart the game</a>
 
 <style>
 * { user-select: none }
@@ -74,16 +74,20 @@ p { font-family: Calibri; font-size: 20px; margin: 0 0 5px; transition: all .5s;
 #times { font-size: 25px; line-height: 20px; color: #007 }
 #res span { font-size: 12px }
 #depth { width: 20px; height: 100%; background: #aaa; transform: rotateY(90deg); position: absolute; }
+#r { position: fixed; bottom: 10px; right: 10px; color: #fff; cursor: pointer; }
 </style>
 
 <script>
 levels = [
   // number of twos allowed , total
-  [99, 4], // 2+2
-  [99, 0], // 2-2
-  [99, 1], // 2/
-  [3, 3],  // 2+2/2
-  [3, 0.5],  // 2/2/2
+  [99, 4], // 0: 2+2
+  [99, 0], // 1: 2-2
+  [99, 1], // 2: 2/
+  [3, 3],  // 3: 2+2/2
+  [3, 0.5],// 4: 2/2/2
+  [3, -8], // 5: -2*2*2
+  [3, 11], // 6: 22/2
+  [3, 16], // 7: 2**(2*2) new buttons
 ];
 
 exp = "";     // expression to eval
@@ -108,29 +112,41 @@ intro = () => {
 // Render a level
 render = (level) => {
 
+  p1.classList.add("o0");
+  p2.classList.add("o0");
+
   // Level 1
   if(level == 1){
-    p1.classList.add("o0");
-    p2.classList.add("o0");
     setTimeout('p2.innerHTML="The goal is shown on the screen.";p2.classList.remove("o0")', 600);
   }
   
   // Level 2
   if(level == 2){
-    p1.classList.add("o0");
-    p2.classList.add("o0");
-    setTimeout('p2.innerHTML="Your progress is saved automatically.";p2.classList.remove("o0")', 600);
+    setTimeout('p2.innerHTML="Your progress is saved automatically.";p2.classList.remove("o0");r.classList.remove("o0")', 600);
   }
   
   // Level 3
   if(level == 3){
-    p1.classList.add("o0");
-    p2.classList.add("o0");
     setTimeout('p2.innerHTML="Now, you need to use the number 2 exactly <b>3</b> times.";p2.classList.remove("o0")', 600);
+  }
+  
+  // Level 7
+  if(level == 7){
+    setTimeout('p2.innerHTML="Too easy? Let\'s add <b>power</b>, <b>square root</b> and <b>parenthesis</b> !";p2.classList.remove("o0")', 600);
+    setTimeout('others.style.display=""',500);
+  }
+  
+  if(level > 0){
+    p2.style.marginTop = "-30px";
   }
   
   if(level > 2){
     k2r.classList.remove("o0");
+    r.classList.remove("o0");  
+  }
+  
+  if(level > 7){
+    others.style.display = "";
   }
   
   if(level > levels.length){
@@ -199,7 +215,7 @@ press = (val, dispval) => {
       k2d = 1;
       k2.classList.add("disabled")
     }
-    k2r.innerHTML = "×" + (levels[level][0] - (exp.match(/2/g).length));
+    k2r.innerHTML = "×" + (levels[level][0] - (exp.match(/2/g)?.length || 0));
   }
 }
 
@@ -238,7 +254,7 @@ kdel.onclick = () => {
     k2d = 0;
     k2.classList.remove("disabled")
   }
-  k2r.innerHTML = "×" + (4 - (exp.match(/2/g).length))
+  k2r.innerHTML = "×" + (4 - (exp.match(/2/g)?.length || 0))
 }
 
 kc.onclick = () => {
@@ -248,7 +264,14 @@ kc.onclick = () => {
   k2d = 0;
   k2.classList.remove("disabled");
   res.innerHTML = "";
-  k2r.innerHTML = "×" + (4 - (exp.match(/2/g).length))
+  k2r.innerHTML = "×" + (4 - (exp.match(/2/g)?.length || 0))
+}
+
+r.onclick = () => {
+  if(confirm("Are you sure? All progress will be lost")){
+    localStorage["PowerOfTwo"] = 0;
+    location = location;
+  }
 }
 
 </script>
