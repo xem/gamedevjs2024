@@ -11,16 +11,13 @@
 <h1 id=h1 class=o0>The Power of Two</h1>
 <p id=p1 class=o0><i>Here's a <b>calculator</b>. It only has the number <b>two</b></i>.</p>
 <p id=p2 class=o0><i>But two is very <b>powerful</b> ! For example, give me a <b>4</b></i>...</p>
-<!--p hidden>Try to compute the value <b id=tot>6</b> on this calculator.
-<br>You can use the digit <b>two</b> exactly <b id=times>four</b> times.
-<br>No other digits are allowed.
-<br-->
 <div id=calc class="o0 r90">
   <!--div id=depth>&nbsp;</div-->
 
   <div id=scr></div>
   <div id=res></div>
   <div id=goal class=o0></div>
+  <div id=k2r class=o0>Twos left: 3</div>
   
   <div id=kb>
     <table>
@@ -35,7 +32,7 @@
     <td><div id=kpar1>(</div>
     <td><div id=kpar2>)</div>
     <tr>
-    <td><div id=k2>2</div><b id=k2r class=o0>×3</b>
+    <td><div id=k2>2</div>
     <td><div id=keq>=</div>
     <td><div id=kdel>←</div>
     <td><div id=kc>Reset</div>
@@ -58,14 +55,15 @@ p { font-family: Calibri; font-size: 20px; margin: 0 0 5px; transition: all .5s;
 .r90 { transform: rotateY(-90deg); }
 #scr { background: #ddd; border: 2px solid #aaa; font: bold 25px/35px monospace; text-align: left; padding: 5px 15px 40px; word-wrap: break-word; border-width: 3px 2px 2px 3px; border-radius: 4px; min-height: 35px; margin: 0 0 80px;}
 #res { height: 40px; font: bold 25px/25px monospace; text-align: right; padding: 0px 15px 0 0; margin: -130px 0 0; }
-#goal { height: 25px; font: bold 15px/15px monospace; text-align: right; padding: 0px 15px 0 0; margin: -12px 0 0; transition: all .5s; }
+#goal { height: 25px; font: bold 15px/15px monospace; text-align: right; padding: 0px 15px 0 0; margin: -12px 0 0; transition: all .5s; color: #666; }
+#k2r { height: 25px; font: bold 15px/15px monospace; text-align: left; padding: 0px 15px 0 0; margin: -26px 0 10px 15px; transition: all .5s; color: #666; }
 #kb table { width: 360px; margin: 0 15px; table-layout: fixed; }
 #kb td { width: 90px; height: 50px; position: relative; }
 #kb td div { position: relative; width: 75px; display: inline-block; background: #ccc; border: 2px solid #888; height: 35px; font: bold 20px/35px monospace; text-align: center; border-width: 2px 4px 4px 2px; border-radius: 5px; letter-spacing: -1; transition: .1s all; }
 #kb td div:active { border-width: 2px; transform: translate(2px, 2px) }
-#k2r { position: absolute; top: 0; right: 0; background: #abf; border: 2px solid #46f; border-radius:50%; width: 20px; height: 20px; }
 #ksqrt b { font-size: 17px }
-#kdel { font-size: 30px }
+#scr b { font-size: 20px }
+#kdel { font-size: 30px !important; }
 [hidden] { display: none !important }
 [none] { display: none !important }
 .o0 { opacity: 0 }
@@ -117,7 +115,7 @@ render = (level) => {
 
   // Level 1
   if(level == 1){
-    setTimeout('p2.innerHTML="The goal is shown on the screen.";p2.classList.remove("o0")', 600);
+    setTimeout('p2.innerHTML="The goal is shown on the screen.";p2.classList.remove("o0");p2.style.marginTop = "-30px"', 600);
   }
   
   // Level 2
@@ -136,7 +134,7 @@ render = (level) => {
     setTimeout('others.style.display=""',500);
   }
   
-  if(level > 0){
+  if(level > 1){
     p2.style.marginTop = "-30px";
   }
   
@@ -169,7 +167,7 @@ render = (level) => {
     scr.style.background = "";
     res.innerHTML = "";
     goal.innerHTML = "Goal: " + levels[level][1];
-    k2r.innerHTML = "×" + levels[level][0];
+    k2r.innerHTML = "Twos left: " + levels[level][0];
     k2.classList.remove("disabled");
   }, 550);
   setTimeout("calc.style.transform='rotateY(90deg)'", 600);
@@ -215,7 +213,7 @@ press = (val, dispval) => {
       k2d = 1;
       k2.classList.add("disabled")
     }
-    k2r.innerHTML = "×" + (levels[level][0] - (exp.match(/2/g)?.length || 0));
+    k2r.innerHTML = "Twos left: " + (levels[level][0] - (exp.match(/2/g)?.length || 0));
   }
 }
 
@@ -223,8 +221,13 @@ kadd.onclick = () => { press("+", "+") }
 ksub.onclick = () => { press("-", "−") }
 kmul.onclick = () => { press("*", "×") }
 kdiv.onclick = () => { press("/", "÷") }
+kpow.onclick = () => { press("**", "^") }
+ksqrt.onclick = () => { press("Math.sqrt", "V<b>▔</b>") }
+kpar1.onclick = () => { press("(", "(") }
+kpar2.onclick = () => { press(")", ")") }
 k2.onclick = () => { press("2","2") }
 keq.onclick = () => {
+  if(exp.length == 0) return;
   if(win) return;
   result = "Error";
   try {
@@ -254,7 +257,7 @@ kdel.onclick = () => {
     k2d = 0;
     k2.classList.remove("disabled")
   }
-  k2r.innerHTML = "×" + (4 - (exp.match(/2/g)?.length || 0))
+  k2r.innerHTML = "Twos left: " + (4 - (exp.match(/2/g)?.length || 0))
 }
 
 kc.onclick = () => {
@@ -264,7 +267,7 @@ kc.onclick = () => {
   k2d = 0;
   k2.classList.remove("disabled");
   res.innerHTML = "";
-  k2r.innerHTML = "×" + (4 - (exp.match(/2/g)?.length || 0))
+  k2r.innerHTML = "Twos left: " + (4 - (exp.match(/2/g)?.length || 0))
 }
 
 r.onclick = () => {
