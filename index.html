@@ -28,7 +28,7 @@
     <td><div id=kdiv>÷</div>
     <tr id=others style=display:none>
     <td><div id=kpow>^</div>
-    <td><div id=ksqrt style=display:none>V<b>▔</b></div>
+    <td><div id=kai style=display:none>AI</div>
     <td><div id=kpar1>(</div>
     <td><div id=kpar2>)</div>
     <tr>
@@ -73,6 +73,8 @@ p { font-family: Calibri; font-size: 20px; margin: 0 0 5px; transition: all .5s;
 #res span { font-size: 12px }
 #depth { width: 20px; height: 100%; background: #aaa; transform: rotateY(90deg); position: absolute; }
 #r { position: fixed; bottom: 10px; right: 10px; color: #fff; cursor: pointer; }
+a { cursor: pointer; pointer-events: all }
+
 </style>
 
 <script>
@@ -92,14 +94,14 @@ levels = [
   [4, 14], // 11: 2**(2*2)-2
   [4, 36], // 12: (2+2+2)**2
   [4, 256],// 13: 2**(2*2*2)
-  [4, 1.4142135623730951], // 14: 2**(2/2/2)
-  [4, 0.125], // 15: 2/(2**(2*2))
-  [4, ], //
-  [4, ], //
-  [4, ], //
-  [4, ], //
-  [4, ], //
+  [4, 0.125], // 14: 2/(2**(2*2))
+  [4, 1.4142135623730951], // 15: 2**(2/2/2)
+  [4, ], // END
 ];
+
+for(i = 0; i < 1000; i++){
+  levels.push([10, i]);
+}
 
 exp = "";     // expression to eval
 expdisp = ""; // expression to display
@@ -143,14 +145,26 @@ render = (level) => {
   
   // Level 7
   if(level == 7){
-    setTimeout('p2.innerHTML="Let\'s add <b>power</b> and <b>parentheses</b>!";p2.classList.remove("o0")', 600);
+    setTimeout('p2.innerHTML="Let\'s add buttons for <b>power</b> and <b>parentheses</b>!";p2.classList.remove("o0")', 600);
     setTimeout('others.style.display=""',500);
   }
   
   // Level 10
   if(level == 10){
     setTimeout('p2.innerHTML="Here\'s a fourth <b>two</b> to play with...";p2.classList.remove("o0")', 600);
-    setTimeout('others.style.display=""',500);
+    setTimeout('',500);
+  }
+  
+  // Level 15
+  if(level == 15){
+    setTimeout('p2.innerHTML="What an odd value... wait, there is a new button?";p2.classList.remove("o0")', 600);
+    setTimeout('kai.style.display=""',500);
+  }
+  
+  // Level 17
+  if(level == 17){
+    setTimeout('p2.innerHTML="Welcome to the AI challenge!<br>The limit of 10 twos is only a maximum here (you can use less).<br>Press the AI button any time to share your highest score."', 600);
+    setTimeout('kai.style.display=""',500);
   }
   
   if(level > 1){
@@ -166,9 +180,14 @@ render = (level) => {
     others.style.display = "";
   }
   
-  if(level > levels.length){
-    main.classList.add("o0");
+  if(level > 15){
+    kai.style.display = "";
+    setTimeout("p2.classList.remove('o0')",600);
   }
+  
+  //if(level > levels.length){
+  //  main.classList.add("o0");
+  //}
 
   calc.style.transform = "rotateY(-90deg)";
   setTimeout(()=>{
@@ -183,6 +202,7 @@ render = (level) => {
     k2d = 0;
     result = 0;
     scr.innerHTML = "";
+    if(level > 15) p2.innerHTML = "";
     scr.style.background = "";
     res.innerHTML = "";
     goal.innerHTML = "Goal: " + levels[level][1];
@@ -241,7 +261,6 @@ ksub.onclick = () => { press("-", "−") }
 kmul.onclick = () => { press("*", "×") }
 kdiv.onclick = () => { press("/", "÷") }
 kpow.onclick = () => { press("^", "^") }
-ksqrt.onclick = () => { press("Math.sqrt", "V<b>▔</b>") }
 kpar1.onclick = () => { press("(", "(") }
 kpar2.onclick = () => { press(")", ")") }
 k2.onclick = () => { press("2","2") }
@@ -253,7 +272,7 @@ keq.onclick = () => {
     result = eval(exp?.replaceAll("^","**") || "''")
   } 
   catch (e) { };
-  if((levels[level][0] < 99 && exp.match(/2/g)?.length < levels[level][0]) && result == levels[level][1]){
+  if((levels[level][0] < 10 && exp.match(/2/g)?.length < levels[level][0]) && result == levels[level][1]){
     result += " <span>(not enough 2's!)";
     return;
   }
@@ -294,6 +313,41 @@ r.onclick = () => {
   if(confirm("Are you sure? All progress will be lost")){
     localStorage["PowerOfTwo"] = 0;
     location = location;
+  }
+}
+
+kai15 = 0;
+kai16 = 0;
+kai.onclick = () => {
+  if(level == 15 && !kai15){
+    kai15 = 1;
+    p2.style.color = "#b00";
+    p2.innerHTML = "Connecting to <b>KorHosik's entry \"powered by HI\"</b> ...";
+    setTimeout("p2.innerHTML='Connection OK'",4000);
+    setTimeout("p2.innerHTML='Requesting a tip...'",6000);
+    setTimeout("p2.innerHTML='Receiving response from AI...'",8000);
+    setTimeout("main.style.height='600px';p2.innerHTML='<b>AI response:</b><br>This number looks like a square root.<br>Did you know square roots are equivalent to power ½ ?'",11000);
+  }
+  if(level == 16 && !kai16){
+    kai16 = 1;
+    p2.style.color = "#b00";
+    p2.innerHTML = "Connecting to <b>KorHosik's entry \"powered by HI\"</b> ...";
+    setTimeout("p2.innerHTML='Connection OK'",2000);
+    setTimeout("p2.innerHTML='Requesting a tip...'",4000);
+    setTimeout("p2.innerHTML='Receiving response from AI...'",6000);
+    setTimeout("main.style.height='600px';p2.innerHTML='<b>AI response:</b><br>It appears that the author of this entry<br>didn\\'t have enough time to create new levels.<br>Congratulations, you beat the game \"The Power Of Two\"!'",9000);
+    setTimeout("p2.innerHTML+='<br>However...'",15000);
+    setTimeout("p2.innerHTML+='<br>I hacked this game\\'s code to generate an extra boring challenge:'",20000);
+    setTimeout("p2.innerHTML+='<br>Compute each number from 0 to 1000 with a maximum of 10 twos!'",25000);
+    setTimeout("p2.innerHTML+='<br>How far can you get? Press the AI button to start!'",30000);
+  }
+  
+  else if(level == 16 && kai16 == 1){
+    kai16 = 2;
+    win = 1;
+    level++;
+    localStorage["PowerOfTwo"] = level;
+    setTimeout('render(level)',1000);
   }
 }
 
