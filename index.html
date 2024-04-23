@@ -1,4 +1,5 @@
 ﻿<!doctype html>
+<script src="https://cdn.jsdelivr.net/npm/phaser@v3.80.1/dist/phaser.min.js"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%220%22 y=%2280%22 font-family=%22arial%22 font-size=%2290%22>️2²</text></svg>">
 <title>The Power of Two</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,6 +37,18 @@
     <td><div id=keq>=</div>
     <td><div id=kdel>←</div>
     <td><div id=kc>Reset</div>
+    <tr id=dig style=display:none><td colspan=4>
+      <div id=kd1>1</div>
+      <div id=kd2>2</div>
+      <div id=kd3>3</div>
+      <div id=kd4>4</div>
+      <div id=kd5>5</div>
+      <div id=kd6>6</div>
+      <div id=kd7>7</div>
+      <div id=kd8>8</div>
+      <div id=kd9>9</div>
+      <div id=kd10>10</div>
+    </tdiv>
     </table>
   </div>
 
@@ -43,6 +56,7 @@
 </div>
 
 <a id=r class=o0>Restart the game</a>
+<a id=sounds>🎵&#xFE0E; OFF</a>
 
 <style>
 * { user-select: none }
@@ -59,7 +73,7 @@ p { font-family: Calibri; font-size: 20px; margin: 0 0 5px; transition: all .5s;
 #k2r { height: 25px; font: bold 15px/15px monospace; text-align: left; padding: 0px 15px 0 0; margin: -26px 0 10px 15px; transition: all .5s; color: #666; }
 #kb table { width: 360px; margin: 0 15px; table-layout: fixed; }
 #kb td { width: 90px; height: 50px; position: relative; }
-#kb td div { position: relative; width: 75px; display: inline-block; background: #ccc; border: 2px solid #888; height: 35px; font: bold 20px/35px monospace; text-align: center; border-width: 2px 4px 4px 2px; border-radius: 5px; letter-spacing: -1; transition: .1s all; }
+#kb td div { cursor: pointer; position: relative; width: 75px; display: inline-block; background: #ccc; border: 2px solid #888; height: 35px; font: bold 20px/35px monospace; text-align: center; border-width: 2px 4px 4px 2px; border-radius: 5px; letter-spacing: -1; transition: .1s all; }
 #kb td div:active { border-width: 2px; transform: translate(2px, 2px) }
 #ksqrt b { font-size: 17px }
 #scr b { font-size: 20px }
@@ -72,9 +86,11 @@ p { font-family: Calibri; font-size: 20px; margin: 0 0 5px; transition: all .5s;
 #times { font-size: 25px; line-height: 20px; color: #007 }
 #res span { font-size: 12px }
 #depth { width: 20px; height: 100%; background: #aaa; transform: rotateY(90deg); position: absolute; }
-#r { position: fixed; bottom: 10px; right: 10px; color: #fff; cursor: pointer; }
+#r { position: fixed; bottom: 10px; right: 10px; color: #fff; cursor: pointer; text-shadow: 0 0 10px #000; }
 a { cursor: pointer; pointer-events: all }
-
+#kb #dig div { width: 25px; margin: 0 2px 0 0 }
+#kb #dig div:active { border-width: 2px 4px 4px 2px; transform: none; }
+#sounds { position: fixed; top: 10px; right: 10px; color: #fff; cursor: pointer; text-shadow: 0 0 10px #000; }
 </style>
 
 <script>
@@ -96,7 +112,7 @@ levels = [
   [4, 256],// 13: 2**(2*2*2)
   [4, 0.125], // 14: 2/(2**(2*2))
   [4, 1.4142135623730951], // 15: 2**(2/2/2)
-  [4, ], // END
+  [4, "Dunno, ask the AI..."], // END
 ];
 
 for(i = 0; i < 1000; i++){
@@ -163,7 +179,7 @@ render = (level) => {
   
   // Level 17
   if(level == 17){
-    setTimeout('p2.innerHTML="Welcome to the AI challenge!<br>The limit of 10 twos is only a maximum here (you can use less).<br>Press the AI button any time to share your highest score."', 600);
+    setTimeout('p2.innerHTML="Welcome to the AI challenge!<br>The limit of 10 twos is only a maximum here (you can use less).<br>Press the AI button any time to share your highest score.<br>Once you\'ve reached level 11, shortcuts buttons will be available for digits 1-10."', 600);
     setTimeout('kai.style.display=""',500);
   }
   
@@ -183,6 +199,10 @@ render = (level) => {
   if(level > 15){
     kai.style.display = "";
     setTimeout("p2.classList.remove('o0')",600);
+  }
+  
+  if(level > 27){
+    dig.style.display = "";
   }
   
   //if(level > levels.length){
@@ -207,7 +227,7 @@ render = (level) => {
     res.innerHTML = "";
     goal.innerHTML = "Goal: " + levels[level][1];
     k2r.innerHTML = "Twos left: " + levels[level][0];
-    k2.classList.remove("disabled");
+    k2.classList?.remove("disabled");
   }, 550);
   setTimeout("calc.style.transform='rotateY(90deg)'", 600);
   setTimeout("calc.style.transition='all .5s'", 650);
@@ -241,17 +261,21 @@ press = (val, dispval) => {
   exp += val; scr.innerHTML = (expdisp += dispval)
   
   // Press 2
-  if(val == 2){
-    // 2 disabled
-    if(k2d) {
-      exp = exp.slice(0, -1);
-      expdisp = expdisp.slice(0, -1);
-      setTimeout("scr.innerHTML=expdisp", 100);
+  if(val == 2 || val.includes("2")){
+    
+    if(level < 17){
+      // 2 disabled
+      if(k2d) {
+        exp = exp.slice(0, -1);
+        expdisp = expdisp.slice(0, -1);
+        setTimeout("scr.innerHTML=expdisp", 100);
+      }
+      if(exp.match(/2/g).length == levels[level][0]) {
+        k2d = 1;
+        k2.classList.add("disabled")
+      }
     }
-    if(exp.match(/2/g).length == levels[level][0]) {
-      k2d = 1;
-      k2.classList.add("disabled")
-    }
+    
     k2r.innerHTML = "Twos left: " + (levels[level][0] - (exp.match(/2/g)?.length || 0));
   }
 }
@@ -263,6 +287,18 @@ kdiv.onclick = () => { press("/", "÷") }
 kpow.onclick = () => { press("^", "^") }
 kpar1.onclick = () => { press("(", "(") }
 kpar2.onclick = () => { press(")", ")") }
+kd1.onclick = () => { press("(2/2)", "(2÷2)") }
+kd2.onclick = () => { press("2", "2") }
+kd3.onclick = () => { press("(2+2/2)", "(2+2÷2)") }
+kd4.onclick = () => { press("(2+2)", "(2+2)") }
+kd5.onclick = () => { press("(2+2+2/2)", "(2+2+2÷2)") }
+kd6.onclick = () => { press("(2+2+2)", "(2+2+2)") }
+kd7.onclick = () => { press("(2+2+2+2/2)", "(2+2+2+2÷2)") }
+kd8.onclick = () => { press("(2*2*2)", "(2×2×2)") }
+kd9.onclick = () => { press("(22/2-2)", "(22÷2-2)") }
+kd10.onclick = () => { press("(2*2*2+2)", "(2×2×2+2)") }
+
+
 k2.onclick = () => { press("2","2") }
 keq.onclick = () => {
   if(exp.length == 0) return;
@@ -278,11 +314,13 @@ keq.onclick = () => {
   }
   res.innerHTML = "= " + result;
   if(result?.toFixed(4) == levels[level][1]?.toFixed(4)) {
-    scr.style.background = "#6f6";
-    win = 1;
-    level++;
-    localStorage["PowerOfTwo"] = level;
-    setTimeout('render(level)',1000);
+    if(exp.match(/2/g)?.length <= levels[level][0]){
+      scr.style.background = "#6f6";
+      win = 1;
+      level++;
+      localStorage["PowerOfTwo"] = level;
+      setTimeout('render(level)',level == 15 ? 2000 : 1000);
+    }
   }
 }
 
@@ -290,7 +328,7 @@ kdel.onclick = () => {
   if(win) return;
   exp = exp.slice(0, -1);
   expdisp = expdisp.slice(0, -1);
-  console.log(exp);
+  //console.log(exp);
   scr.innerHTML = expdisp || "";
   if(exp.match(/2/g)?.length < levels[level][0] || levels[level][0] == 99) {
     k2d = 0;
@@ -326,7 +364,7 @@ kai.onclick = () => {
     setTimeout("p2.innerHTML='Connection OK'",4000);
     setTimeout("p2.innerHTML='Requesting a tip...'",6000);
     setTimeout("p2.innerHTML='Receiving response from AI...'",8000);
-    setTimeout("main.style.height='600px';p2.innerHTML='<b>AI response:</b><br>This number looks like a square root.<br>Did you know square roots are equivalent to power ½ ?'",11000);
+    setTimeout("main.style.height='500px';p2.innerHTML='<b>AI response:</b><br>This number looks like a square root.<br>Did you know square roots are equivalent to power ½ ?'",11000);
   }
   if(level == 16 && !kai16){
     kai16 = 1;
@@ -335,7 +373,7 @@ kai.onclick = () => {
     setTimeout("p2.innerHTML='Connection OK'",2000);
     setTimeout("p2.innerHTML='Requesting a tip...'",4000);
     setTimeout("p2.innerHTML='Receiving response from AI...'",6000);
-    setTimeout("main.style.height='600px';p2.innerHTML='<b>AI response:</b><br>It appears that the author of this entry<br>didn\\'t have enough time to create new levels.<br>Congratulations, you beat the game \"The Power Of Two\"!'",9000);
+    setTimeout("main.style.height='550px';p2.innerHTML='<b>AI response:</b><br>It appears that the author of this entry<br>didn\\'t have enough time to create new levels.<br>Congratulations, you beat the game \"The Power Of Two\"!'",9000);
     setTimeout("p2.innerHTML+='<br>However...'",15000);
     setTimeout("p2.innerHTML+='<br>I hacked this game\\'s code to generate an extra boring challenge:'",20000);
     setTimeout("p2.innerHTML+='<br>Compute each number from 0 to 1000 with a maximum of 10 twos!'",25000);
@@ -349,6 +387,46 @@ kai.onclick = () => {
     localStorage["PowerOfTwo"] = level;
     setTimeout('render(level)',1000);
   }
+  
+  else if(level >= 17){
+    window.open("http://twitter.com/share?text=My highest score on @xem's game \"The Power Of Two\" is "+levels[level][0]+". Play here: &url=https://maximeeuziere.itch.io/the-power-of-two&hashtags=GamedevJS");
+  }
 }
 
+
+// Music
+
+P = D => {
+  if(!D)return;    // D = melody string (a-z + 0 for silence)
+  I=0.3;           // I = note length in seconds
+  with(A = new AudioContext)
+  with(G=createGain())
+  for(i=0;i<D.length;i++)
+  with(createOscillator())
+  if(D[i=+i]&&D[i]!="0")
+  connect(G),
+  G.connect(destination),
+  start(i*I+.3),
+  frequency.setValueAtTime(440*1.06**(-105+D.charCodeAt(i)),i*I+.3),
+  type='sine',            // or triangle or square or sawtooth
+  gain.setValueAtTime(.01,i*I+.3),
+  gain.setTargetAtTime(.001,i*I+.1+.1,.05),
+  stop(i*I+.3+I-.01);
+}
+
+mus = 0;
+musstart = 0;
+inte = 0;
+sounds.onclick = () => {
+  mus = 1 - mus;
+  if(mus){
+    sounds.innerHTML = "🎵&#xFE0E; ON"; 
+    clearInterval(inte);
+    P("miffif00mifbfh00heaehe00ifffif00iheaehefffff");
+    inte = setInterval(()=>{
+      P("miffif00mifbfh00heaehe00ifffif00iheaehefffff");
+    }, 14000);
+  }
+  else { sounds.innerHTML = "🎵&#xFE0E; OFF"; A.close(); clearInterval(inte); }
+}
 </script>
