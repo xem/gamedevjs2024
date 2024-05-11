@@ -114,8 +114,8 @@ levels = [
   [4, "Dunno, ask the AI..."], // END
 ];
 
-for(i = 0; i < 1000; i++){
-  levels.push([10, i]);
+for(i = 1; i < 1000; i++){
+  levels.push([8, i]);
 }
 
 exp = "";     // expression to eval
@@ -178,7 +178,7 @@ render = (level) => {
   
   // Level 17
   if(level == 17){
-    setTimeout('p2.innerHTML="Welcome to the AI challenge!<br>The limit of 10 twos is only a maximum here (you can use less).<br>Press the AI button any time to share your highest score.<br>Once you\'ve reached level 11, shortcuts buttons will be available for digits 1-10."', 600);
+    setTimeout('main.style.height="500px";p2.innerHTML="Welcome to the AI challenge!<br>The limit of 8 twos is only a maximum here (you can use less).<br>Press the AI button any time to share your highest score.<br>Once you\'ve reached level 11, shortcuts buttons will be available for digits 1-10."', 600);
     setTimeout('kai.style.display=""',500);
   }
   
@@ -307,7 +307,7 @@ keq.onclick = () => {
     result = eval(exp?.replaceAll("^","**") || "''")
   } 
   catch (e) { };
-  if((levels[level][0] < 10 && exp.match(/2/g)?.length < levels[level][0]) && result == levels[level][1]){
+  if((levels[level][0] < 8 && exp.match(/2/g)?.length < levels[level][0]) && result == levels[level][1]){
     result += " <span>(not enough 2's!)";
     return;
   }
@@ -372,10 +372,10 @@ kai.onclick = () => {
     setTimeout("p2.innerHTML='Connection OK'",2000);
     setTimeout("p2.innerHTML='Requesting a tip...'",4000);
     setTimeout("p2.innerHTML='Receiving response from AI...'",6000);
-    setTimeout("main.style.height='550px';p2.innerHTML='<b>AI response:</b><br>It appears that the author of this entry<br>didn\\'t have enough time to create new levels.<br>Congratulations, you beat the game \"The Power Of Two\"!'",9000);
+    setTimeout("main.style.height='540px';p2.innerHTML='<b>AI response:</b><br>It appears that the author of this entry<br>didn\\'t have enough time to create new levels.<br>Congratulations, you beat the game \"The Power Of Two\"!'",9000);
     setTimeout("p2.innerHTML+='<br>However...'",15000);
-    setTimeout("p2.innerHTML+='<br>I hacked this game\\'s code to generate an extra boring challenge:'",20000);
-    setTimeout("p2.innerHTML+='<br>Compute each number from 0 to 1000 with a maximum of 10 twos!'",25000);
+    setTimeout("p2.innerHTML+='<br>I hacked this game\\'s code to generate an extra challenge:'",20000);
+    setTimeout("p2.innerHTML+='<br>Compute each number from 1 to 1000 with a maximum of 8 twos!'",25000);
     setTimeout("p2.innerHTML+='<br>How far can you get? Press the AI button to start!'",30000);
   }
   
